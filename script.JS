@@ -128,7 +128,21 @@ function marqueeSlide__init() {
     window.__marqueeTimer = setTimeout(initMarquee, 200);
   });
 }
+// marqueeSlide ------------------------------ //
+function heartDown__init() {
+  const hearts = document.querySelectorAll(
+    ".img-btn-wrapper-heart > img"
+  );
+  if (!hearts.length) return;
+
+  hearts.forEach((heart) => {
+    heart.addEventListener("click", () => {
+      heart.classList.toggle("keyDown");
+    });
+  });
+}
 // Functions Operate Key ------------------------------ //
 bannerSwiper__init();
 scrollLeins__init();
 marqueeSlide__init();
+heartDown__init();
