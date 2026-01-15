@@ -4,39 +4,426 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>올리브영 리디자인</title>
+    <!-- Link Swiper's CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css"
+    />
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <!-- CSS -->
     <link rel="stylesheet" href="style.CSS" />
-    <!-- JS -->
-    <script src="script.JS" defer></script>
   </head>
   <body>
     <header>
       <div class="hd-container">
         <div class="container-top">
-          <div class="logo-wrapper">
+          <a href="#" class="logo-wrapper">
             <img
               src="images/header/OliveYoung-logo-white.png"
               alt="OliveYoung-logo-white"
             />
-          </div>
-          <div class="contact-wrapper">
-            <div class="log-in">로그인</div>
+          </a>
+          <div class="contact-wrapper" onclick="return false">
+            <a href="#" class="log-in">로그인</a>
             <span></span>
-            <div class="join">회원가입</div>
+            <a href="#" class="join">회원가입</a>
             <span></span>
-            <div class="membership">멤버십</div>
+            <a href="#" class="membership">멤버십</a>
           </div>
         </div>
-        <div class="container-bot">
+        <div class="container-bottom" onclick="return false">
           <div class="left-box">
-            <div class="img-wrapper">
-              <img src="" alt="" />
+            <a href="#" class="img-wrapper">
+              <img src="images/header/menu-icon.png" alt="menu-icon" />
+            </a>
+            <a href="#" class="text-box text-box-1">오늘드림</a>
+            <a href="#" class="text-box text-box-2">주문배송</a>
+            <a href="#" class="text-box text-box-3">올영매장</a>
+          </div>
+          <div class="right-box">
+            <div class="search-box">
+              <input
+                id="search"
+                class="search-input"
+                type="text"
+                placeholder="검색어를 입력해주세요"
+                aria-label="검색어 입력"
+              />
+              <button id="btnSearch" class="search-button" type="button">
+                <img src="images/header/search-icon.png" alt="search-icon" />
+              </button>
             </div>
+            <a href="#" class="icon-wrapper">
+              <img
+                src="images/header/shopping bag-icon.png"
+                alt="shopping bag-icon"
+              />
+            </a>
+            <a href="#" class="icon-wrapper">
+              <img src="images/header/profile-icon.png" alt="profile-icon" />
+            </a>
+            <a href="#" class="icon-wrapper">
+              <img
+                src="images/header/translate-icon.png"
+                alt="translate-icon"
+              />
+            </a>
           </div>
         </div>
       </div>
     </header>
-    <main></main>
+    <main>
+      <section class="sec-top-banner">
+        <div class="swiper mySwiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide swiper-slide-1">
+              <div class="img-wrapper">
+                <img
+                  src="images/main/sec-top-banner/sec-top-banner-img-3.png"
+                  alt="sec-top-banner-img-3"
+                />
+              </div>
+              <div class="text-wrapper">
+                <div class="item-brief-box">
+                  <div class="item-produce-box">
+                    <span class="item-label">원오브뎀</span>
+                    <span class="item-usage">Brow & Wresh</span>
+                  </div>
+                  <div class="item-explain-box">
+                    <h2>
+                      분위기를 결정짓는
+                      <br />
+                      아이케어의 3가지 종착역
+                    </h2>
+                    <span>집에서 간편하게 셀프케어</span>
+                  </div>
+                </div>
+                <a href="#" class="img-btn">
+                  <span>VIEW ALL</span>
+                  <div class="img-wrapper">
+                    <img
+                      src="images/main/sec-top-banner/arrow-right.png"
+                      alt="arrow-right"
+                    />
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="swiper-slide swiper-slide-2">
+              <div class="img-wrapper">
+                <img
+                  src="images/main/sec-top-banner/sec-top-banner-img-2.png"
+                  alt="sec-top-banner-img-2"
+                />
+              </div>
+              <div class="text-wrapper">
+                <div class="item-brief-box">
+                  <div class="item-produce-box">
+                    <span class="item-label">일리윤</span>
+                    <span class="item-usage">Brow & Wresh</span>
+                  </div>
+                  <div class="item-explain-box">
+                    <h2>
+                      분위기를 결정짓는
+                      <br />
+                      아이케어의 3가지 종착역
+                    </h2>
+                    <span>집에서 간편하게 셀프케어</span>
+                  </div>
+                </div>
+                <a href="#" class="img-btn">
+                  <span>VIEW ALL</span>
+                  <div class="img-wrapper">
+                    <img
+                      src="images/main/sec-top-banner/arrow-right.png"
+                      alt="arrow-right"
+                    />
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="swiper-slide swiper-slide-3">
+              <div class="img-wrapper">
+                <img
+                  src="images/main/sec-top-banner/sec-top-banner-img-1.png"
+                  alt="sec-top-banner-img-1"
+                />
+              </div>
+              <div class="text-wrapper">
+                <div class="item-brief-box">
+                  <div class="item-produce-box">
+                    <span class="item-label">에스트라</span>
+                    <span class="item-usage">Brow & Wresh</span>
+                  </div>
+                  <div class="item-explain-box">
+                    <h2>
+                      분위기를 결정짓는
+                      <br />
+                      아이케어의 3가지 종착역
+                    </h2>
+                    <span>집에서 간편하게 셀프케어</span>
+                  </div>
+                </div>
+                <a href="#" class="img-btn">
+                  <span>VIEW ALL</span>
+                  <div class="img-wrapper">
+                    <img
+                      src="images/main/sec-top-banner/arrow-right.png"
+                      alt="arrow-right"
+                    />
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </section>
+      <section class="sec-category">
+        <div class="text-box">
+          <h4 class="title">카테고리</h4>
+          <span>찾으시는 제품의 카테고리를 선택해주세요</span>
+        </div>
+        <div class="marquee-wrapper">
+          <div class="marquee-box" onclick="return false">
+            <div class="categories category-1">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-1.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-1"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">메이크업</div>
+                <div class="text-bottom">Make-Up</div>
+              </div>
+            </div>
+            <div class="categories category-2">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-2.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-2"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">향수</div>
+                <div class="text-bottom">Perfume</div>
+              </div>
+            </div>
+            <div class="categories category-3">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-3.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-3"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">네일</div>
+                <div class="text-bottom">Nail</div>
+              </div>
+            </div>
+            <div class="categories category-4">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-4.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-4"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">마스크팩</div>
+                <div class="text-bottom">Mask-Pack</div>
+              </div>
+            </div>
+            <div class="categories category-5">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-5.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-5"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">헤어케어</div>
+                <div class="text-bottom">Hair-Care</div>
+              </div>
+            </div>
+            <div class="categories category-6">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-6.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-6"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">스킨케어</div>
+                <div class="text-bottom">Skin-Care</div>
+              </div>
+            </div>
+            <div class="categories category-7">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-7.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-7"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">바디케어</div>
+                <div class="text-bottom">Body-Care</div>
+              </div>
+            </div>
+            <div class="categories category-8">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-8.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-8"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">맨즈케어</div>
+                <div class="text-bottom">Mans-Care</div>
+              </div>
+            </div>
+            <div class="categories category-9">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-9.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-9"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">선케어</div>
+                <div class="text-bottom">Sun-Care</div>
+              </div>
+            </div>
+            <div class="categories category-10">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-10.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-10"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">클렌징</div>
+                <div class="text-bottom">Cleansing</div>
+              </div>
+            </div>
+            <div class="categories category-11">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-11.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-11"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">푸드</div>
+                <div class="text-bottom">Food</div>
+              </div>
+            </div>
+            <div class="categories category-12">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-12.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-12"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">생활용품</div>
+                <div class="text-bottom">Household-Products</div>
+              </div>
+            </div>
+            <div class="categories category-13">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-13.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-13"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">패션</div>
+                <div class="text-bottom">Fashion</div>
+              </div>
+            </div>
+            <div class="categories category-14">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-14.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-14"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">가전제품</div>
+                <div class="text-bottom">Home-Appliances</div>
+              </div>
+            </div>
+            <div class="categories category-15">
+              <a href="#" class="img-container">
+                <img
+                  src="images/main/sec-category/category-img-15.png"
+                  loading="eager"
+                  decoding="sync"
+                  alt="category-img-15"
+                />
+              </a>
+              <div class="text-container">
+                <div class="text-top">취미용품</div>
+                <div class="text-bottom">Hobby-Appliances</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
     <footer></footer>
+    <!-- J-Query -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Leins -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis/dist/lenis.min.js"
+      defer
+    ></script>
+    <!-- GSAP -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+      defer
+    ></script>
+    <!-- Scroll Trigger -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+      defer
+    ></script>
+    <!-- AOS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    <!-- JS -->
+    <script src="script.JS" defer></script>
   </body>
 </html>
