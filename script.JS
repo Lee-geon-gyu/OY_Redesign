@@ -12,7 +12,7 @@ function bannerSwiper__init() {
     autoplay: {
       delay: 3500,
       disableOnInteraction: false,
-      pauseOnMouseEnter: true,
+      pauseOnMouseEnter: false,
     },
     navigation: {
       nextEl: ".swiper-button-next",
@@ -110,7 +110,7 @@ function marqueeSlide__init() {
       { x: 0 },
       {
         x: -totalWidth,
-        duration: 12,
+        duration: 48,
         ease: "none",
         repeat: -1,
         force3D: false,
@@ -128,11 +128,9 @@ function marqueeSlide__init() {
     window.__marqueeTimer = setTimeout(initMarquee, 200);
   });
 }
-// marqueeSlide ------------------------------ //
+// heartDown ------------------------------ //
 function heartDown__init() {
-  const hearts = document.querySelectorAll(
-    ".img-btn-wrapper-heart > img"
-  );
+  const hearts = document.querySelectorAll(".img-btn-wrapper-heart > img");
   if (!hearts.length) return;
 
   hearts.forEach((heart) => {
@@ -141,8 +139,73 @@ function heartDown__init() {
     });
   });
 }
+// hoveredDark ------------------------------ //
+function hoveredDark__init() {
+  const saleItems = document.querySelectorAll(".sale-item");
+
+  if (!saleItems.length) return;
+
+  saleItems.forEach((item) => {
+    const btn = item.querySelector(".text-box .view-btn");
+    const img = item.querySelector(".img-wrapper img");
+
+    if (!btn || !img) return;
+
+    btn.addEventListener("mouseenter", () => {
+      img.classList.add("Darkness");
+    });
+
+    btn.addEventListener("mouseleave", () => {
+      img.classList.remove("Darkness");
+    });
+  });
+}
+// timeSaleCountdown ------------------------------ //
+function timeSaleCountdown__init() {
+  const hEl = document.getElementById("hours");
+  const mEl = document.getElementById("minutes");
+  const sEl = document.getElementById("seconds");
+
+  if (!hEl || !mEl || !sEl) return;
+
+  const originTime = {
+    h: parseInt(hEl.textContent, 10),
+    m: parseInt(mEl.textContent, 10),
+    s: parseInt(sEl.textContent, 10),
+  };
+
+  let totalSeconds =
+    originTime.h * 3600 +
+    originTime.m * 60 +
+    originTime.s;
+
+  function renderTime(sec) {
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+
+    hEl.textContent = String(h).padStart(2, "0");
+    mEl.textContent = String(m).padStart(2, "0");
+    sEl.textContent = String(s).padStart(2, "0");
+  }
+
+  setInterval(() => {
+    totalSeconds--;
+
+    if (totalSeconds < 0) {
+      totalSeconds =
+        originTime.h * 3600 +
+        originTime.m * 60 +
+        originTime.s;
+    }
+
+    renderTime(totalSeconds);
+  }, 1000);
+}
 // Functions Operate Key ------------------------------ //
 bannerSwiper__init();
 scrollLeins__init();
 marqueeSlide__init();
 heartDown__init();
+hoveredDark__init();
+timeSaleCountdown__init();
