@@ -102,9 +102,23 @@ function marqueeSlide__init() {
           ? Promise.resolve()
           : new Promise((res) => {
               img.onload = img.onerror = res;
-            })
-      )
+            }),
+      ),
     );
+  }
+
+  function clearClones(box) {
+    [...box.children].forEach((item) => {
+      if (item.dataset.clone === "true") item.remove();
+    });
+  }
+
+  function measureWidth(items) {
+    let w = 0;
+    items.forEach((item) => {
+      w += item.getBoundingClientRect().width;
+    });
+    return Math.round(w);
   }
 
   async function initMarquee() {
@@ -113,44 +127,51 @@ function marqueeSlide__init() {
     if (!box || !wrapper) return;
 
     if (tl) tl.kill();
-
-    [...box.children].forEach((item) => {
-      if (item.dataset.clone === "true") item.remove();
-    });
+    clearClones(box);
 
     const originalItems = [...box.children];
-
-    originalItems.forEach((item) => {
-      const clone = item.cloneNode(true);
-      clone.dataset.clone = "true";
-
-      clone.querySelectorAll("img").forEach((img) => {
-        img.loading = "eager";
-        img.decoding = "sync";
-        img.fetchPriority = "high";
-      });
-
-      box.appendChild(clone);
-    });
+    if (!originalItems.length) return;
 
     await imagesLoaded(box);
 
-    let totalWidth = 0;
-    originalItems.forEach((item) => {
-      totalWidth += item.offsetWidth;
-    });
+    const baseWidth = measureWidth(originalItems);
+    if (!baseWidth) return;
 
-    tl = gsap.fromTo(
-      box,
-      { x: 0 },
-      {
-        x: -totalWidth,
-        duration: 48,
-        ease: "none",
-        repeat: -1,
-        force3D: false,
-      }
+    const needSets = Math.max(
+      2,
+      Math.ceil((wrapper.clientWidth * 2) / baseWidth) + 1,
     );
+    for (let s = 0; s < needSets; s++) {
+      originalItems.forEach((item) => {
+        const clone = item.cloneNode(true);
+        clone.dataset.clone = "true";
+
+        clone.querySelectorAll("img").forEach((img) => {
+          img.loading = "eager";
+          img.decoding = "sync";
+          img.fetchPriority = "high";
+        });
+
+        box.appendChild(clone);
+      });
+    }
+
+    await imagesLoaded(box);
+
+    const wrapX = gsap.utils.wrap(-baseWidth, 0);
+
+    gsap.set(box, { x: 0 });
+
+    tl = gsap.to(box, {
+      x: `-=${baseWidth}`,
+      duration: 48,
+      ease: "none",
+      repeat: -1,
+      force3D: true,
+      modifiers: {
+        x: (x) => `${Math.round(wrapX(parseFloat(x)))}px`,
+      },
+    });
 
     wrapper.onmouseenter = () => tl.pause();
     wrapper.onmouseleave = () => tl.play();
@@ -280,8 +301,61 @@ function itemsSwiper__Init() {
     });
   });
 }
+// itemboxViewer ------------------------------ //
+function itemboxViewer__init() {
+  const clickers = document.querySelectorAll(".selection-sub-title");
+
+  clickers.forEach((el) => {
+    el.addEventListener("click", () => {
+      const sec = el.closest(".sec-recommend");
+      if (!sec) return;
+
+      sec.querySelector(".clicker")?.classList.remove("clicker");
+      el.classList.add("clicker");
+
+      const index = el.dataset.index;
+      const target = sec.querySelector(`:scope > .item-box-vision-${index}`);
+      if (!target) return;
+
+      [...sec.children].forEach((child) => {
+        if (!child.className.includes("item-box")) return;
+
+        if (child === target) {
+          child.classList.add("viewer");
+          child.style.display = "flex";
+          child.style.transition = "opacity 0.2s ease";
+          child.style.opacity = "0";
+
+          requestAnimationFrame(() => {
+            child.style.opacity = "1";
+          });
+        } else if (child.classList.contains("viewer")) {
+          child.style.transition = "opacity 0.2s ease";
+          child.style.opacity = "0";
+
+          setTimeout(() => {
+            child.classList.remove("viewer");
+            child.style.display = "none";
+          }, 150);
+        }
+      });
+    });
+  });
+
+  const first = document.querySelector(".selection-sub-title[data-index='1']");
+  if (first) {
+    first.classList.add("clicker");
+    const sec = first.closest(".sec-recommend");
+    const firstBox = sec.querySelector(":scope > .item-box-vision-1");
+    if (firstBox) {
+      firstBox.classList.add("viewer");
+      firstBox.style.display = "flex";
+      firstBox.style.opacity = "1";
+    }
+  }
+}
 // Functions Operate Key ------------------------------ //
-loadingPage__init();
+// loadingPage__init();
 bannerSwiper__init();
 scrollLeins__init();
 marqueeSlide__init();
@@ -289,3 +363,4 @@ heartDown__init();
 hoveredDark__init();
 timeSaleCountdown__init();
 itemsSwiper__Init();
+itemboxViewer__init();
