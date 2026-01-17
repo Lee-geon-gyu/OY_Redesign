@@ -355,7 +355,7 @@ function itemboxViewer__init() {
   }
 }
 // Functions Operate Key ------------------------------ //
-// loadingPage__init();
+loadingPage__init();
 bannerSwiper__init();
 scrollLeins__init();
 marqueeSlide__init();
