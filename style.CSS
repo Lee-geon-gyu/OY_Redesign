@@ -105,6 +105,33 @@ span {
   --color-white: #fff;
   --box-border: 0.1rem solid red;
 }
+/* Customize ------------------------------------------------------------ */
+.loading-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100dvh;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-black);
+  pointer-events: all;
+}
+
+.loading-page > .logo-box {
+  width: 42rem;
+  height: auto;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.loading-page > .logo-box > img {
+  width: 100%;
+  object-fit: cover;
+  transform: scale(0.75);
+}
 /* header ------------------------------------------------------------ */
 header {
   position: fixed;
@@ -1946,6 +1973,10 @@ main > .sec-mobile-banner > .text-box > .text-bottom > .btn-wrapper {
   background-color: var(--color-white);
 }
 
+main > .sec-mobile-banner > .text-box > .text-bottom > .btn-wrapper:hover {
+  background-color: rgba(231, 231, 231, 1);
+}
+
 main
   > .sec-mobile-banner
   > .text-box
@@ -1973,4 +2004,10 @@ main
 main > .sec-mobile-banner > .text-box > .text-bottom > .btn-wrapper > span {
   font-weight: 500;
   font-size: 1.6rem;
+  cursor: pointer;
+}
+/* main > sec-recommend ------------------------------------------------------------ */
+main > .sec-recommend {
+  width: 100%;
+  height: 100%;
 }

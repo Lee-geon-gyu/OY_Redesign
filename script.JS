@@ -3,6 +3,41 @@ console.clear();
 AOS.init();
 gsap.registerPlugin(ScrollTrigger);
 
+// loadingPage ------------------------------ //
+function loadingPage__init() {
+  $("html, body").css({
+    overflow: "hidden",
+    height: "100%",
+  });
+
+  function preventScroll(e) {
+    e.preventDefault();
+  }
+
+  window.addEventListener("wheel", preventScroll, { passive: false });
+  window.addEventListener("touchmove", preventScroll, { passive: false });
+
+  function preventKey(e) {
+    const keys = [32, 37, 38, 39, 40];
+    if (keys.includes(e.keyCode)) {
+      e.preventDefault();
+    }
+  }
+  document.addEventListener("keydown", preventKey);
+
+  setTimeout(() => {
+    $(".loading-page").fadeOut(1500, function () {
+      $("html, body").css({
+        overflow: "",
+        height: "",
+      });
+
+      window.removeEventListener("wheel", preventScroll);
+      window.removeEventListener("touchmove", preventScroll);
+      document.removeEventListener("keydown", preventKey);
+    });
+  }, 1000);
+}
 // bannerSwiper ------------------------------ //
 function bannerSwiper__init() {
   var swiper = new Swiper(".mySwiper", {
@@ -246,6 +281,7 @@ function itemsSwiper__Init() {
   });
 }
 // Functions Operate Key ------------------------------ //
+loadingPage__init();
 bannerSwiper__init();
 scrollLeins__init();
 marqueeSlide__init();
