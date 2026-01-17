@@ -174,10 +174,7 @@ function timeSaleCountdown__init() {
     s: parseInt(sEl.textContent, 10),
   };
 
-  let totalSeconds =
-    originTime.h * 3600 +
-    originTime.m * 60 +
-    originTime.s;
+  let totalSeconds = originTime.h * 3600 + originTime.m * 60 + originTime.s;
 
   function renderTime(sec) {
     const h = Math.floor(sec / 3600);
@@ -193,14 +190,60 @@ function timeSaleCountdown__init() {
     totalSeconds--;
 
     if (totalSeconds < 0) {
-      totalSeconds =
-        originTime.h * 3600 +
-        originTime.m * 60 +
-        originTime.s;
+      totalSeconds = originTime.h * 3600 + originTime.m * 60 + originTime.s;
     }
 
     renderTime(totalSeconds);
   }, 1000);
+}
+// itemsSwiper ------------------------------ //
+function itemsSwiper__Init() {
+  const itemsSwiper = new Swiper(".item-slider", {
+    loop: true,
+    centeredSlides: true,
+    watchOverflow: false,
+    speed: 600,
+
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+
+    breakpoints: {
+      0: {
+        slidesPerView: 1,
+        centeredSlides: true,
+        spaceBetween: 60,
+      },
+      450: {
+        slidesPerView: 1,
+        centeredSlides: true,
+        spaceBetween: 20,
+      },
+      768: {
+        slidesPerView: 1,
+        centeredSlides: true,
+        spaceBetween: 60,
+      },
+      1024: {
+        slidesPerView: 3,
+        centeredSlides: true,
+        spaceBetween: 10,
+      },
+    },
+  });
+
+  const swiperEl = document.querySelectorAll(".item-box img");
+
+  swiperEl.forEach((el) => {
+    el.addEventListener("mouseenter", () => {
+      itemsSwiper.autoplay.stop();
+    });
+
+    el.addEventListener("mouseleave", () => {
+      itemsSwiper.autoplay.start();
+    });
+  });
 }
 // Functions Operate Key ------------------------------ //
 bannerSwiper__init();
@@ -209,3 +252,4 @@ marqueeSlide__init();
 heartDown__init();
 hoveredDark__init();
 timeSaleCountdown__init();
+itemsSwiper__Init();
