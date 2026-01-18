@@ -74,6 +74,7 @@ html body {
   max-width: 100%;
   overflow-x: hidden;
   position: relative;
+  min-width: 1150px;
 }
 
 header,
@@ -241,6 +242,7 @@ span {
 header {
   position: fixed;
   width: 100%;
+  min-width: 1150px;
   height: 10rem;
   box-sizing: border-box;
   padding: var(--margin-grid-system);
