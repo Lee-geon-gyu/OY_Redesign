@@ -38,6 +38,21 @@ function loadingPage__init() {
     });
   }, 1000);
 }
+// headerChangeOnSection ------------------------------ //
+function headerChangeOnSection__init() {
+  const header = document.querySelector("header");
+  const triggerHeight = 610;
+
+  if (!header) return;
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > triggerHeight) {
+      header.classList.add("on-sec-k");
+    } else {
+      header.classList.remove("on-sec-k");
+    }
+  });
+}
 // bannerSwiper ------------------------------ //
 function bannerSwiper__init() {
   var swiper = new Swiper(".mySwiper", {
@@ -354,6 +369,66 @@ function itemboxViewer__init() {
     }
   }
 }
+// shortbtnDropdown ------------------------------ //
+function shortbtnDropdown__init() {
+  const buttons = document.querySelectorAll(
+    "footer > .ft-top-box > .contact-wrapper > .right-box > .short-btn",
+  );
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const parent = this.parentElement;
+      const list = parent.querySelector(":scope > .affiliate-list");
+      if (!list) return;
+
+      list.style.transition = "none";
+
+      const isOpen = list.offsetHeight > 0;
+
+      list.style.overflow = "hidden";
+
+      if (isOpen) {
+        const height = list.scrollHeight;
+        list.style.height = height + "rem";
+
+        requestAnimationFrame(() => {
+          list.style.transition = "height 0.5s ease";
+          list.style.height = "0px";
+        });
+
+        setTimeout(() => {
+          list.style.display = "none";
+        }, 500);
+      } else {
+        list.style.display = "flex";
+        list.style.height = "0px";
+
+        const height = list.scrollHeight;
+
+        requestAnimationFrame(() => {
+          list.style.transition = "height 0.5s ease";
+          list.style.height = height + "rem";
+        });
+      }
+    });
+  });
+}
+// bottomSelectboxDropDown ------------------------------ //
+function bottomSelectboxDropDown__init() {
+  const buttons = document.querySelectorAll(
+    "footer > .ft-top-box > .contact-wrapper > .right-box > .short-btn"
+  );
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      this.querySelector(":scope > ul")?.classList.toggle("bottomDropDown");
+      this.querySelector(":scope > div > .img-wrapper > img")
+        ?.classList.toggle("rotateReverse");
+
+      this.parentElement?.classList.toggle("addColor");
+    });
+  });
+}
 // Functions Operate Key ------------------------------ //
 loadingPage__init();
 bannerSwiper__init();
@@ -364,3 +439,6 @@ hoveredDark__init();
 timeSaleCountdown__init();
 itemsSwiper__Init();
 itemboxViewer__init();
+shortbtnDropdown__init();
+bottomSelectboxDropDown__init();
+headerChangeOnSection__init();
