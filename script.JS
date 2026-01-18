@@ -41,7 +41,7 @@ function loadingPage__init() {
 // headerChangeOnSection ------------------------------ //
 function headerChangeOnSection__init() {
   const header = document.querySelector("header");
-  const triggerHeight = 610;
+  const triggerHeight = 930;
 
   if (!header) return;
 
@@ -416,14 +416,15 @@ function shortbtnDropdown__init() {
 // bottomSelectboxDropDown ------------------------------ //
 function bottomSelectboxDropDown__init() {
   const buttons = document.querySelectorAll(
-    "footer > .ft-top-box > .contact-wrapper > .right-box > .short-btn"
+    "footer > .ft-top-box > .contact-wrapper > .right-box > .short-btn",
   );
 
   buttons.forEach((btn) => {
     btn.addEventListener("click", function () {
       this.querySelector(":scope > ul")?.classList.toggle("bottomDropDown");
-      this.querySelector(":scope > div > .img-wrapper > img")
-        ?.classList.toggle("rotateReverse");
+      this.querySelector(":scope > div > .img-wrapper > img")?.classList.toggle(
+        "rotateReverse",
+      );
 
       this.parentElement?.classList.toggle("addColor");
     });
