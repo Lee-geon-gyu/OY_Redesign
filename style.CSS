@@ -119,12 +119,12 @@ span {
   justify-content: center;
   align-items: center;
   gap: 7.2rem;
-  background-color: var(--color-black);
+  background-color: var(--color-white);
   pointer-events: all;
 }
 
 .loading-page > .logo-box {
-  width: 32rem;
+  width: 50%;
   height: auto;
   overflow: hidden;
   box-sizing: border-box;
@@ -133,24 +133,6 @@ span {
 .loading-page > .logo-box > img {
   width: 100%;
   object-fit: cover;
-}
-
-.loading-page > .loading-bar-wrapper {
-  width: 8rem;
-  height: auto;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.loading-page > .loading-bar-wrapper > img {
-  width: 100%;
-  object-fit: cover;
-  filter: brightness(10);
-  animation-name: loading;
-  animation-duration: 3s;
-  animation-iteration-count: infinite;
-  animation-play-state: running;
-  animation-timing-function: ease-in-out;
 }
 
 .express-top-btn {
@@ -219,15 +201,6 @@ span {
   width: 100%;
   height: auto;
   object-fit: cover;
-}
-
-@keyframes loading {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes arrowMove {
