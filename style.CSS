@@ -149,7 +149,7 @@ span {
 }
 
 .express-top-btn:hover {
-  background-color: rgba(141, 201, 3, 1);
+  background-color: rgb(3, 104, 0);
   transition: background-color 0.3s linear;
 }
 
@@ -176,22 +176,19 @@ span {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -25%);
   width: 2.4rem;
   height: auto;
   box-sizing: border-box;
   overflow: hidden;
-  animation-name: arrowMove;
-  animation-duration: 1s;
-  animation-iteration-count: infinite;
-  animation-play-state: running;
-  animation-timing-function: ease-in-out;
+  animation: none;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s linear;
 }
 
 .express-top-btn:hover > .img-wrapper {
+  animation: arrowMove 1s ease-in-out infinite;
   opacity: 1;
   visibility: visible;
   transition: opacity 0.3s linear;
@@ -542,6 +539,64 @@ header.on-sec-k
   > .icon-wrapper
   > img {
   filter: brightness(0);
+}
+
+/* Keep the header legible while it overlaps the dark time-sale box. */
+header.on-dark-box > .hd-container > .container-top > .logo-wrapper > img,
+header.on-dark-box
+  > .hd-container
+  > .container-bottom
+  > .left-box
+  > .img-wrapper
+  > img,
+header.on-dark-box
+  > .hd-container
+  > .container-bottom
+  > .right-box
+  > .search-box
+  > #btnSearch
+  > img,
+header.on-dark-box
+  > .hd-container
+  > .container-bottom
+  > .right-box
+  > .icon-wrapper
+  > img {
+  filter: none;
+}
+
+header.on-dark-box > .hd-container > .container-top > .contact-wrapper,
+header.on-dark-box > .hd-container > .container-bottom > .left-box > .text-box {
+  color: var(--color-white);
+}
+
+header.on-dark-box > .hd-container > .container-top > .contact-wrapper span {
+  background-color: var(--color-white);
+}
+
+header.on-dark-box
+  > .hd-container
+  > .container-bottom
+  > .right-box
+  > .search-box
+  > #search,
+header.on-dark-box
+  > .hd-container
+  > .container-bottom
+  > .right-box
+  > .search-box
+  > #search:focus {
+  border-bottom-color: var(--color-white);
+  color: var(--color-white);
+}
+
+header.on-dark-box
+  > .hd-container
+  > .container-bottom
+  > .right-box
+  > .search-box
+  > #search::placeholder {
+  color: var(--color-white);
 }
 /* main ------------------------------------------------------------ */
 main {

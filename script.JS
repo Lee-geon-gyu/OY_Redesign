@@ -41,17 +41,45 @@ function loadingPage__init() {
 // headerChangeOnSection ------------------------------ //
 function headerChangeOnSection__init() {
   const header = document.querySelector("header");
+  const darkBox = document.querySelector(".time-sale-wrapper");
   const triggerHeight = 930;
 
   if (!header) return;
 
-  window.addEventListener("scroll", () => {
+  function updateHeaderColor() {
     if (window.scrollY > triggerHeight) {
       header.classList.add("on-sec-k");
     } else {
       header.classList.remove("on-sec-k");
     }
+
+    if (!darkBox) return;
+
+    const headerRect = header.getBoundingClientRect();
+    const darkBoxRect = darkBox.getBoundingClientRect();
+    const isOverDarkBox =
+      darkBoxRect.top < headerRect.bottom &&
+      darkBoxRect.bottom > headerRect.top;
+
+    header.classList.toggle("on-dark-box", isOverDarkBox);
+  }
+
+  let ticking = false;
+  function requestHeaderColorUpdate() {
+    if (ticking) return;
+
+    ticking = true;
+    window.requestAnimationFrame(() => {
+      updateHeaderColor();
+      ticking = false;
+    });
+  }
+
+  updateHeaderColor();
+  window.addEventListener("scroll", requestHeaderColorUpdate, {
+    passive: true,
   });
+  window.addEventListener("resize", requestHeaderColorUpdate);
 }
 // bannerSwiper ------------------------------ //
 function bannerSwiper__init() {
