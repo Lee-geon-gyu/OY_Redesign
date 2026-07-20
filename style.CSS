@@ -607,7 +607,9 @@ main {
 /* main > sec-top-banner ------------------------------------------------------------ */
 main > .sec-top-banner {
   width: 100%;
-  height: 100%;
+  height: 100dvh;
+  min-height: var(--minHeight--block-system);
+  overflow: hidden;
 }
 
 main > .sec-top-banner > .swiper {
@@ -641,9 +643,33 @@ main
   > .img-wrapper
   img {
   width: 100%;
-  height: auto;
+  height: 102%;
   min-height: var(--minHeight--block-system);
   object-fit: cover;
+  display: block;
+  transform: translateY(0);
+  will-change: transform;
+}
+
+main
+  > .sec-top-banner
+  > .swiper
+  > .swiper-wrapper
+  > .swiper-slide-active
+  > .img-wrapper
+  > img {
+  animation: secTopBannerFloat 3.5s ease-in-out infinite;
+}
+
+@keyframes secTopBannerFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-0.75%);
+  }
 }
 
 main
