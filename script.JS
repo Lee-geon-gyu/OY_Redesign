@@ -43,10 +43,21 @@ function headerChangeOnSection__init() {
   const header = document.querySelector("header");
   const darkBox = document.querySelector(".time-sale-wrapper");
   const triggerHeight = 930;
+  const scrollThreshold = 8;
+  let lastScrollY = Math.max(window.scrollY, 0);
 
   if (!header) return;
 
   function updateHeaderColor() {
+    const currentScrollY = Math.max(window.scrollY, 0);
+
+    if (currentScrollY <= 0) {
+      header.classList.remove("header-hidden");
+    } else if (Math.abs(currentScrollY - lastScrollY) >= scrollThreshold) {
+      header.classList.toggle("header-hidden", currentScrollY > lastScrollY);
+      lastScrollY = currentScrollY;
+    }
+
     if (window.scrollY > triggerHeight) {
       header.classList.add("on-sec-k");
     } else {

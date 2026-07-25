@@ -211,6 +211,8 @@ span {
 /* header ------------------------------------------------------------ */
 header {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   min-width: 1150px;
   height: 10rem;
@@ -219,6 +221,13 @@ header {
   background-color: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
   z-index: 100;
+  transform: translateY(0);
+  transition: transform 0.35s ease;
+  will-change: transform;
+}
+
+header.header-hidden {
+  transform: translateY(-100%);
 }
 
 header > .hd-container {
