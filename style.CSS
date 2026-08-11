@@ -149,7 +149,7 @@ span {
 }
 
 .express-top-btn:hover {
-  background-color: rgb(3, 104, 0);
+  background-color: var(--color-black);
   transition: background-color 0.3s linear;
 }
 
@@ -188,7 +188,7 @@ span {
 }
 
 .express-top-btn:hover > .img-wrapper {
-  animation: arrowMove 1s ease-in-out infinite;
+  animation: arrowMove 1.75s ease-in-out infinite;
   opacity: 1;
   visibility: visible;
   transition: opacity 0.3s linear;
@@ -203,9 +203,11 @@ span {
 @keyframes arrowMove {
   0% {
     transform: translate(-50%, -25%);
+    opacity: 1;
   }
   100% {
     transform: translate(-50%, -75%);
+    opacity: 0;
   }
 }
 /* header ------------------------------------------------------------ */
@@ -667,7 +669,7 @@ main
   > .swiper-slide-active
   > .img-wrapper
   > img {
-  animation: secTopBannerFloat 3.5s ease-in-out infinite;
+  animation: secTopBannerFloat 5s ease-in-out infinite;
 }
 
 @keyframes secTopBannerFloat {

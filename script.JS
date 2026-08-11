@@ -97,9 +97,13 @@ function bannerSwiper__init() {
   var swiper = new Swiper(".mySwiper", {
     loop: true,
     spaceBetween: 30,
+    speed: 1250,
     effect: "fade",
+    fadeEffect: {
+      crossFade: true,
+    },
     autoplay: {
-      delay: 3500,
+      delay: 5000,
       disableOnInteraction: false,
       pauseOnMouseEnter: false,
     },
