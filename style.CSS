@@ -66,21 +66,24 @@ a {
 }
 
 html {
-  font-size: max(6px, 0.52083333vw);
+  /* Keep the desktop layout scale from shrinking below a 1280px viewport. */
+  font-size: max(6.66666667px, 0.52083333vw);
+  min-width: 1280px;
 }
 
 html body {
   font-family: "Pretendard", sans-serif;
-  max-width: 100%;
-  overflow-x: hidden;
+  width: 100%;
+  overflow-x: auto;
   position: relative;
-  min-width: 1150px;
+  min-width: 1280px;
 }
 
 header,
 main,
 footer {
   width: 100%;
+  min-width: 1280px;
 }
 
 span,
@@ -216,7 +219,7 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  min-width: 1150px;
+  min-width: 1280px;
   height: 10rem;
   box-sizing: border-box;
   padding: var(--margin-grid-system);
