@@ -3263,6 +3263,7 @@ footer > .ft-bottom-box > .top-box > .logo-wrapper {
   height: auto;
   box-sizing: border-box;
   overflow: hidden;
+  cursor: default;
 }
 
 footer > .ft-bottom-box > .top-box > .logo-wrapper > img {
