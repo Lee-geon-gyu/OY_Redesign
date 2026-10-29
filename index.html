@@ -3,6 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="preload"
+      href="fonts/NotoSerifKR-Medium.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
     <title>올리브영 리디자인</title>
     <!-- Link Swiper's CSS -->
     <link
@@ -15,17 +22,37 @@
     <link rel="stylesheet" href="style.CSS" />
   </head>
   <body>
-    <div class="loading-page">
-      <div class="logo-box">
-        <img src="images/loading-page/loading-logo.png" alt="loading-logo" />
+    <div
+      class="loading-page"
+      role="status"
+      aria-label="올리브영 페이지를 준비하고 있습니다"
+    >
+      <div class="loader-stage" aria-hidden="true">
+        <div class="loader-copy-mask">
+          <p class="loader-copy">당신의 소중한 일상을 아름답게</p>
+        </div>
+        <div class="loader-line"></div>
+        <div class="loader-logo-mask">
+          <img
+            class="loader-logo"
+            src="images/loading-page/OliveYoung-logo-white.png"
+            alt=""
+            width="724"
+            height="87"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </div>
       </div>
     </div>
-    <a href="#" class="express-top-btn">
-      <div class="text-wrapper">TOP</div>
-      <div class="img-wrapper">
-        <img src="images/express-btn/arrow-top.png" alt="arrow-top" />
+    <button type="button" class="express-top-btn" aria-label="맨 위로">
+      <div class="top-btn__track" aria-hidden="true">
+        <span class="top-btn__word">TOP</span>
+        <span class="top-btn__glyph">
+          <img src="images/express-btn/btn-arrow-top.png" alt="" />
+        </span>
       </div>
-    </a>
+    </button>
     <header>
       <div class="hd-container">
         <div class="container-top">
@@ -42,6 +69,15 @@
             <span></span>
             <a href="#" class="membership wrap-item">멤버십</a>
           </div>
+          <button
+            type="button"
+            class="mobile-menu-toggle"
+            aria-label="전체 메뉴 열기"
+            aria-controls="mobile-menu"
+            aria-expanded="false"
+          >
+            <span></span><span></span><span></span>
+          </button>
         </div>
         <div class="container-bottom" onclick="return false;">
           <div class="left-box">
@@ -84,6 +120,50 @@
         </div>
       </div>
     </header>
+    <dialog
+      id="mobile-menu"
+      class="mobile-menu"
+      aria-label="전체 메뉴"
+      data-lenis-prevent
+    >
+      <div class="mobile-menu__top">
+        <div class="mobile-menu__icons">
+          <a href="#" aria-label="장바구니"
+            ><img src="images/header/shopping bag-icon.png" alt=""
+          /></a>
+          <a href="#" aria-label="마이페이지"
+            ><img src="images/header/profile-icon.png" alt=""
+          /></a>
+          <a href="#" aria-label="언어 선택"
+            ><img src="images/header/translate-icon.png" alt=""
+          /></a>
+        </div>
+        <button type="button" class="mobile-menu__close" aria-label="메뉴 닫기">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <form class="mobile-menu__search" role="search">
+        <input
+          id="mobile-search"
+          type="search"
+          placeholder="검색어를 입력해주세요"
+          aria-label="검색어 입력"
+        />
+        <button type="submit" aria-label="검색">
+          <img src="images/header/search-icon.png" alt="" />
+        </button>
+      </form>
+      <nav class="mobile-menu__nav" aria-label="주요 서비스">
+        <a href="#">오늘드림</a>
+        <a href="#">주문배송</a>
+        <a href="#">올영매장</a>
+      </nav>
+      <nav class="mobile-menu__account" aria-label="회원 메뉴">
+        <a href="#">로그인</a>
+        <a href="#">회원가입</a>
+        <a href="#">멤버십</a>
+      </nav>
+    </dialog>
     <main>
       <section class="sec-top-banner">
         <div class="swiper mySwiper">
@@ -781,81 +861,129 @@
         </div>
       </section>
       <section class="sec-planning">
-        <div class="text-box">
+        <div class="text-box" aria-hidden="true">
           <span>"Weekly Special"</span>
           <h4 class="title">올리브영 단독기획</h4>
         </div>
-        <div class="time-sale-wrapper">
-          <div class="top-box">
-            <span class="time-sale">TIME SALE</span>
-            <div class="timer-box">
-              <span class="number" id="hours">14</span>
-              <div class="colon-box">
-                <span></span>
-                <span></span>
-              </div>
-              <span class="number" id="minutes">37</span>
-              <div class="colon-box">
-                <span></span>
-                <span></span>
-              </div>
-              <span class="number" id="seconds">56</span>
-            </div>
-          </div>
-          <div class="bottom-box">
-            <div class="sale-items-wrapper">
-              <div class="sale-item sale-item-1">
-                <a href="#" class="img-wrapper">
-                  <img
-                    src="images/main/sec-planning/sec-planning-img-1.png"
-                    alt="sec-planning-img-1"
-                  />
-                </a>
-                <div class="text-box">
-                  <span>
-                    6년 연속 수상
-                    <br />
-                    오쏘몰 멀티 비타민
-                  </span>
-                  <a href="#" class="view-btn view-btn-1"
-                    ><span>VIEW MORE</span>
-                  </a>
+        <div class="sale-scene" data-expand-progress="0">
+          <div class="sale-stage">
+            <div class="time-sale-wrapper">
+              <div class="top-box">
+                <h3 class="time-sale">
+                  <span>TIME</span> <em>SALE</em
+                  ><svg
+                    class="sale-orbit"
+                    viewBox="0 0 680 150"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M68 42C-26 78 26 130 300 118M597 17c119 24 83 68-36 78"
+                    />
+                  </svg>
+                </h3>
+                <p class="sale-subtitle">지금, 특별한 혜택이 곧 종료됩니다!</p>
+                <div
+                  class="timer-box"
+                  role="timer"
+                  aria-label="타임세일 남은 시간"
+                >
+                  <div class="timer-unit">
+                    <span class="number" id="hours">14</span
+                    ><span class="timer-label">HOURS</span>
+                  </div>
+                  <div class="colon-box" aria-hidden="true">
+                    <span></span><span></span>
+                  </div>
+                  <div class="timer-unit">
+                    <span class="number" id="minutes">37</span
+                    ><span class="timer-label">MINUTES</span>
+                  </div>
+                  <div class="colon-box" aria-hidden="true">
+                    <span></span><span></span>
+                  </div>
+                  <div class="timer-unit">
+                    <span class="number" id="seconds">56</span
+                    ><span class="timer-label">SECONDS</span>
+                  </div>
                 </div>
               </div>
-              <div class="sale-item sale-item-2">
-                <a href="#" class="img-wrapper">
-                  <img
-                    src="images/main/sec-planning/sec-planning-img-2.png"
-                    alt="sec-planning-img-2"
-                  />
-                </a>
-                <div class="text-box">
-                  <span>
-                    뿌리부터 힘있게
-                    <br />
-                    르네휘테르
-                  </span>
-                  <a href="#" class="view-btn view-btn-2"
-                    ><span>VIEW MORE</span>
-                  </a>
-                </div>
-              </div>
-              <div class="sale-item sale-item-3">
-                <a href="#" class="img-wrapper">
-                  <img
-                    src="images/main/sec-planning/sec-planning-img-3.png"
-                    alt="sec-planning-img-3"
-                  />
-                </a>
-                <div class="text-box">
-                  <span>
-                    올해 마지막
-                    <br />
-                    올영 세일
-                  </span>
-                  <a href="#" class="view-btn view-btn-3">
-                    <span>VIEW MORE</span>
-                  </a>
+              <div class="bottom-box" inert>
+                <div class="sale-items-wrapper">
+                  <div class="sale-item sale-item-1">
+                    <a
+                      href="#"
+                      class="img-wrapper"
+                      aria-label="오쏘몰 멀티 비타민 자세히 보기"
+                      ><img
+                        src="images/main/sec-planning/sec-planning-img-1.png"
+                        alt="sec-planning-img-1"
+                    /></a>
+                    <div class="sale-discount" aria-label="30퍼센트 할인">
+                      <strong>30<span>%</span></strong
+                      ><span>OFF</span>
+                    </div>
+                    <div class="text-box">
+                      <span>6년 연속 수상<br />오쏘몰 멀티 비타민</span
+                      ><a
+                        href="#"
+                        class="view-btn view-btn-1"
+                        aria-label="오쏘몰 멀티 비타민 자세히 보기"
+                        ><span class="sale-sr-only">VIEW MORE</span
+                        ><svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M5 12h14m-6-6 6 6-6 6" /></svg
+                      ></a>
+                    </div>
+                  </div>
+                  <div class="sale-item sale-item-2">
+                    <a
+                      href="#"
+                      class="img-wrapper"
+                      aria-label="르네휘테르 자세히 보기"
+                      ><img
+                        src="images/main/sec-planning/sec-planning-img-2.png"
+                        alt="sec-planning-img-2"
+                    /></a>
+                    <div class="sale-discount" aria-label="25퍼센트 할인">
+                      <strong>25<span>%</span></strong
+                      ><span>OFF</span>
+                    </div>
+                    <div class="text-box">
+                      <span>뿌리부터 힘있게<br />르네휘테르</span
+                      ><a
+                        href="#"
+                        class="view-btn view-btn-2"
+                        aria-label="르네휘테르 자세히 보기"
+                        ><span class="sale-sr-only">VIEW MORE</span
+                        ><svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M5 12h14m-6-6 6 6-6 6" /></svg
+                      ></a>
+                    </div>
+                  </div>
+                  <div class="sale-item sale-item-3">
+                    <a
+                      href="#"
+                      class="img-wrapper"
+                      aria-label="올영 세일 자세히 보기"
+                      ><img
+                        src="images/main/sec-planning/sec-planning-img-3.png"
+                        alt="sec-planning-img-3"
+                    /></a>
+                    <div class="sale-discount" aria-label="20퍼센트 할인">
+                      <strong>20<span>%</span></strong
+                      ><span>OFF</span>
+                    </div>
+                    <div class="text-box">
+                      <span>올해 마지막<br />올영 세일</span
+                      ><a
+                        href="#"
+                        class="view-btn view-btn-3"
+                        aria-label="올영 세일 자세히 보기"
+                        ><span class="sale-sr-only">VIEW MORE</span
+                        ><svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M5 12h14m-6-6 6 6-6 6" /></svg
+                      ></a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
