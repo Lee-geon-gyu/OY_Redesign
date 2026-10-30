@@ -10,6 +10,13 @@
       type="font/ttf"
       crossorigin
     />
+    <link
+      rel="preload"
+      href="fonts/NotoSerifKR-SemiBold.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
     <title>올리브영 리디자인</title>
     <!-- Link Swiper's CSS -->
     <link
@@ -29,19 +36,16 @@
     >
       <div class="loader-stage" aria-hidden="true">
         <div class="loader-copy-mask">
-          <p class="loader-copy">당신의 소중한 일상을 아름답게</p>
-        </div>
-        <div class="loader-line"></div>
-        <div class="loader-logo-mask">
-          <img
-            class="loader-logo"
-            src="images/loading-page/OliveYoung-logo-white.png"
-            alt=""
-            width="724"
-            height="87"
-            fetchpriority="high"
-            decoding="async"
-          />
+          <p class="loader-copy" lang="ko">
+            <span class="loader-phrase-window">
+              <span class="loader-phrase loader-phrase--current"
+                >소중한 일상을 더 아름답게</span
+              >
+              <span class="loader-phrase loader-phrase--next"
+                >빛나는 순간을 더 특별하게</span
+              >
+            </span>
+          </p>
         </div>
       </div>
     </div>
@@ -869,18 +873,7 @@
           <div class="sale-stage">
             <div class="time-sale-wrapper">
               <div class="top-box">
-                <h3 class="time-sale">
-                  <span>TIME</span> <em>SALE</em
-                  ><svg
-                    class="sale-orbit"
-                    viewBox="0 0 680 150"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M68 42C-26 78 26 130 300 118M597 17c119 24 83 68-36 78"
-                    />
-                  </svg>
-                </h3>
+                <h3 class="time-sale"><span>TIME</span> <em>SALE</em></h3>
                 <p class="sale-subtitle">지금, 특별한 혜택이 곧 종료됩니다!</p>
                 <div
                   class="timer-box"
@@ -918,20 +911,18 @@
                         src="images/main/sec-planning/sec-planning-img-1.png"
                         alt="sec-planning-img-1"
                     /></a>
-                    <div class="sale-discount" aria-label="30퍼센트 할인">
-                      <strong>30<span>%</span></strong
-                      ><span>OFF</span>
-                    </div>
                     <div class="text-box">
-                      <span>6년 연속 수상<br />오쏘몰 멀티 비타민</span
-                      ><a
-                        href="#"
+                      <span>복숭아향을 머금은<br />맑고 청아한 수분감</span
+                      ><button
+                        type="button"
                         class="view-btn view-btn-1"
-                        aria-label="오쏘몰 멀티 비타민 자세히 보기"
-                        ><span class="sale-sr-only">VIEW MORE</span
+                        aria-label="오쏘몰 멀티 비타민 이미지 확대"
+                      >
+                        <span class="sale-sr-only">이미지 확대</span
                         ><svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M5 12h14m-6-6 6 6-6 6" /></svg
-                      ></a>
+                          <path d="M5 12h14m-6-6 6 6-6 6" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                   <div class="sale-item sale-item-2">
@@ -943,20 +934,18 @@
                         src="images/main/sec-planning/sec-planning-img-2.png"
                         alt="sec-planning-img-2"
                     /></a>
-                    <div class="sale-discount" aria-label="25퍼센트 할인">
-                      <strong>25<span>%</span></strong
-                      ><span>OFF</span>
-                    </div>
                     <div class="text-box">
-                      <span>뿌리부터 힘있게<br />르네휘테르</span
-                      ><a
-                        href="#"
+                      <span>모공을 지키는<br />현명한 케어 습관</span
+                      ><button
+                        type="button"
                         class="view-btn view-btn-2"
-                        aria-label="르네휘테르 자세히 보기"
-                        ><span class="sale-sr-only">VIEW MORE</span
+                        aria-label="르네휘테르 이미지 확대"
+                      >
+                        <span class="sale-sr-only">이미지 확대</span
                         ><svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M5 12h14m-6-6 6 6-6 6" /></svg
-                      ></a>
+                          <path d="M5 12h14m-6-6 6 6-6 6" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                   <div class="sale-item sale-item-3">
@@ -968,20 +957,18 @@
                         src="images/main/sec-planning/sec-planning-img-3.png"
                         alt="sec-planning-img-3"
                     /></a>
-                    <div class="sale-discount" aria-label="20퍼센트 할인">
-                      <strong>20<span>%</span></strong
-                      ><span>OFF</span>
-                    </div>
                     <div class="text-box">
-                      <span>올해 마지막<br />올영 세일</span
-                      ><a
-                        href="#"
+                      <span>메이크업을 위한<br />가장 쉬운 선택</span
+                      ><button
+                        type="button"
                         class="view-btn view-btn-3"
-                        aria-label="올영 세일 자세히 보기"
-                        ><span class="sale-sr-only">VIEW MORE</span
+                        aria-label="올영 세일 이미지 확대"
+                      >
+                        <span class="sale-sr-only">이미지 확대</span
                         ><svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M5 12h14m-6-6 6 6-6 6" /></svg
-                      ></a>
+                          <path d="M5 12h14m-6-6 6 6-6 6" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 </div>

@@ -8,9 +8,9 @@ function loadingPage__init() {
   const loader = document.querySelector(".loading-page");
   if (!loader) return;
   const copy = loader.querySelector(".loader-copy");
-  const line = loader.querySelector(".loader-line");
-  const logoMask = loader.querySelector(".loader-logo-mask");
-  const logo = loader.querySelector(".loader-logo");
+  const phraseWindow = loader.querySelector(".loader-phrase-window");
+  const outgoing = loader.querySelector(".loader-phrase--current");
+  const incoming = loader.querySelector(".loader-phrase--next");
   const savedStyles = [document.documentElement, document.body].map(
     (element) => ({
       element,
@@ -50,13 +50,10 @@ function loadingPage__init() {
   window.addEventListener("wheel", preventScroll, { passive: false });
   window.addEventListener("touchmove", preventScroll, { passive: false });
   document.addEventListener("keydown", preventKey);
-  let finished = false,
-    fillFrame = 0;
+  let finished = false;
   function finish() {
     if (finished) return;
     finished = true;
-    window.removeEventListener("resize", requestFillMeasure);
-    cancelAnimationFrame(fillFrame);
     loader.dataset.stage = "complete";
     gsap.set(loader, { display: "none" });
     loader.setAttribute("aria-hidden", "true");
@@ -73,44 +70,6 @@ function loadingPage__init() {
     document.dispatchEvent(new Event("oliveyoung:ready"));
   }
 
-  const fragment = document.createDocumentFragment();
-  [...copy.textContent].forEach((character) => {
-    const glyph = document.createElement("span");
-    glyph.className = "loader-glyph";
-    glyph.textContent = character;
-    fragment.appendChild(glyph);
-  });
-  copy.replaceChildren(fragment);
-  const glyphs = [...copy.children];
-  function measureFill() {
-    if (finished) return;
-    const origin = glyphs[0]?.offsetLeft || 0;
-    let width = 0;
-    glyphs.forEach((glyph) => {
-      const left = glyph.offsetLeft - origin;
-      glyph.style.setProperty("--loader-glyph-left", left + "px");
-      width = Math.max(width, left + glyph.offsetWidth);
-    });
-    const edge = Math.max(
-      6,
-      Math.min(14, parseFloat(getComputedStyle(copy).fontSize) * 0.22),
-    );
-    copy.style.setProperty("--loader-fill-edge", edge + "px");
-    copy.style.setProperty(
-      "--loader-text-width",
-      width + edge + parseFloat(getComputedStyle(copy).fontSize) * 0.1 + "px",
-    );
-  }
-  function requestFillMeasure() {
-    if (!fillFrame && !finished)
-      fillFrame = requestAnimationFrame(() => {
-        fillFrame = 0;
-        measureFill();
-      });
-  }
-  window.addEventListener("resize", requestFillMeasure, { passive: true });
-  document.fonts.ready.then(requestFillMeasure);
-
   function animate() {
     const timeline = gsap.timeline({
       data: "oliveyoung-loader",
@@ -119,100 +78,127 @@ function loadingPage__init() {
     const stage = (name) => {
       loader.dataset.stage = name;
     };
-    measureFill();
-    gsap.set(copy, { autoAlpha: 0, y: 0, "--loader-fill-progress": 0 });
-    gsap.set(glyphs, { autoAlpha: 1 });
-    gsap.set(line, { autoAlpha: 0, scaleX: 0, y: 0 });
-    gsap.set(logo, { y: 0, yPercent: 112 });
-    gsap.set(logoMask, {
-      scale: 1,
+    gsap.set(copy, { autoAlpha: 0 });
+    gsap.set(phraseWindow, {
+      "--loader-reveal": "0%",
+      "--loader-fog": 0,
+      "--loader-feather": "0.38em",
+    });
+    gsap.set(outgoing, {
       y: 0,
       yPercent: 0,
-      transformOrigin: "50% 50%",
+      opacity: 1,
+      filter: "blur(0px)",
+      clipPath: "inset(0% 100% 0% 0%)",
+    });
+    gsap.set(incoming, {
+      y: 0,
+      yPercent: 105,
+      opacity: 0,
+      filter: "blur(3px)",
     });
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      stage("logo-settle");
-      gsap.set(logo, { yPercent: 0 });
-      gsap.set(logoMask, { bottom: "50%", yPercent: 50, scale: 1 });
-      timeline.to(loader, { autoAlpha: 0, duration: 0.2 }, 0.3);
+      stage("fade-out");
+      timeline.to(loader, { autoAlpha: 0, duration: 0.2 }, 0);
       return;
     }
 
     timeline
       .addLabel("intro", 0)
-      .call(() => stage("intro"), [], 0)
-      .to(copy, { autoAlpha: 1, duration: 0.35, ease: "sine.inOut" }, 0.15)
+      .call(() => stage("intro"), [], "intro")
+      .set(copy, { autoAlpha: 1 }, 0.1)
+      .to(
+        outgoing,
+        {
+          clipPath: "inset(0% 0% 0% 0%)",
+          duration: 1.5,
+          ease: "sine.inOut",
+        },
+        0.1,
+      )
+      .to(
+        phraseWindow,
+        {
+          "--loader-reveal": "100%",
+          duration: 1.5,
+          ease: "sine.inOut",
+        },
+        0.1,
+      )
+      .to(
+        phraseWindow,
+        { "--loader-fog": 1, duration: 0.25, ease: "sine.inOut" },
+        0.16,
+      )
+      .to(
+        phraseWindow,
+        {
+          "--loader-fog": 0,
+          "--loader-feather": "0em",
+          duration: 0.35,
+          ease: "sine.inOut",
+        },
+        1.25,
+      )
+      .addLabel("first-copy", 1.6)
+      .addLabel("phrase-roll", "first-copy+=1.1")
+      .call(() => stage("phrase-roll"), [], "phrase-roll")
+      .to(
+        outgoing,
+        {
+          yPercent: -105,
+          opacity: 0,
+          filter: "blur(3px)",
+          duration: 1.5,
+          ease: "power2.inOut",
+        },
+        "phrase-roll",
+      )
+      .to(
+        incoming,
+        {
+          yPercent: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 1.5,
+          ease: "power2.inOut",
+        },
+        "phrase-roll",
+      )
+      .addLabel("second-copy", "phrase-roll+=1.5")
+      .call(() => stage("second-copy"), [], "second-copy")
+      .addLabel("copy-fade-out", "second-copy+=1.45")
+      .call(() => stage("copy-fade-out"), [], "copy-fade-out")
       .to(
         copy,
-        { "--loader-fill-progress": 1, duration: 2.2, ease: "none" },
-        0.4,
+        { autoAlpha: 0, duration: 0.7, ease: "sine.inOut" },
+        "copy-fade-out",
       )
-      .addLabel("fold", 3)
-      .call(() => stage("fold"), [], "fold")
-      .to(
-        glyphs,
-        {
-          y: () => parseFloat(getComputedStyle(copy).fontSize) * 2.1,
-          scaleX: 0.98,
-          scaleY: 0.55,
-          transformOrigin: "50% 100%",
-          filter: "blur(2px)",
-          duration: 0.8,
-          stagger: { each: 0.018, from: "center" },
-          ease: "power2.in",
-        },
-        3.05,
-      )
-      .addLabel("line", 3.05)
-      .call(() => stage("line"), [], "line")
-      .to(
-        line,
-        { autoAlpha: 1, scaleX: 1, duration: 0.95, ease: "sine.inOut" },
-        "fold",
-      )
-      .addLabel("line-hold", 4.05)
-      .call(() => stage("line-hold"), [], "line-hold")
-      .addLabel("logo-reveal", 4.6)
-      .call(() => stage("logo-reveal"), [], "logo-reveal")
-      .to(
-        logo,
-        { yPercent: 0, duration: 1.35, ease: "power2.out" },
-        "logo-reveal",
-      )
-      .addLabel("logo-settle", 6)
-      .call(() => stage("logo-settle"), [], "logo-settle")
-      .to(
-        line,
-        { scaleX: 0, autoAlpha: 0, duration: 0.85, ease: "sine.inOut" },
-        "logo-settle",
-      )
-      .addLabel("hold", 6.95)
-      .call(() => stage("hold"), [], "hold")
-      .addLabel("fade-out", 7.35)
+      .addLabel("fade-out", "copy-fade-out+=0.63") // 90% of the 0.7s text fade.
       .call(() => stage("fade-out"), [], "fade-out")
       .to(
         loader,
-        { autoAlpha: 0, duration: 0.65, ease: "sine.inOut" },
+        { autoAlpha: 0, duration: 0.7, ease: "sine.inOut" },
         "fade-out",
       );
   }
 
-  const imagesReady = Promise.all(
-    [...loader.querySelectorAll("img")].map((image) =>
-      image.decode().catch(() => {}),
-    ),
-  );
   const fontsReady = Promise.race([
     document.fonts.ready,
     new Promise((resolve) => setTimeout(resolve, 1000)),
   ]);
-  Promise.all([imagesReady, fontsReady]).then(animate).catch(finish);
+  fontsReady.then(animate).catch(finish);
 }
+
 // headerChangeOnSection ------------------------------ //
 function headerChangeOnSection__init() {
   const header = document.querySelector("header");
   const darkBox = document.querySelector(".time-sale-wrapper");
+  const darkSurfaces = [
+    darkBox,
+    document.querySelector(".sec-mobile-banner"),
+  ].filter(Boolean);
   const triggerHeight = 930;
   const scrollThreshold = 8;
   let lastScrollY = Math.max(window.scrollY, 0);
@@ -235,18 +221,20 @@ function headerChangeOnSection__init() {
       header.classList.remove("on-sec-k");
     }
 
-    if (!darkBox) return;
-
-    const headerRect = header.getBoundingClientRect();
-    const darkBoxRect = darkBox.getBoundingClientRect();
-    const saleStyle = getComputedStyle(darkBox);
-    const clipTop =
-      parseFloat(saleStyle.getPropertyValue("--sale-clip-top")) || 0;
-    const clipBottom =
-      parseFloat(saleStyle.getPropertyValue("--sale-clip-bottom")) || 0;
-    const isOverDarkBox =
-      darkBoxRect.top + clipTop < headerRect.bottom &&
-      darkBoxRect.bottom - clipBottom > headerRect.top;
+    // Use the visible header position so its ink is ready before the slide-in starts.
+    const headerRect = { top: 0, bottom: header.offsetHeight };
+    const isOverDarkBox = darkSurfaces.some((surface) => {
+      const rect = surface.getBoundingClientRect();
+      const style = surface === darkBox ? getComputedStyle(surface) : null;
+      const clipTop =
+        parseFloat(style?.getPropertyValue("--sale-clip-top")) || 0;
+      const clipBottom =
+        parseFloat(style?.getPropertyValue("--sale-clip-bottom")) || 0;
+      return (
+        rect.top + clipTop < headerRect.bottom &&
+        rect.bottom - clipBottom > headerRect.top
+      );
+    });
 
     header.classList.toggle("on-dark-box", isOverDarkBox);
   }
@@ -467,27 +455,6 @@ function heartDown__init() {
   hearts.forEach((heart) => {
     heart.addEventListener("click", () => {
       heart.classList.toggle("keyDown");
-    });
-  });
-}
-// hoveredDark ------------------------------ //
-function hoveredDark__init() {
-  const saleItems = document.querySelectorAll(".sale-item");
-
-  if (!saleItems.length) return;
-
-  saleItems.forEach((item) => {
-    const btn = item.querySelector(".text-box .view-btn");
-    const img = item.querySelector(".img-wrapper img");
-
-    if (!btn || !img) return;
-
-    btn.addEventListener("mouseenter", () => {
-      img.classList.add("Darkness");
-    });
-
-    btn.addEventListener("mouseleave", () => {
-      img.classList.remove("Darkness");
     });
   });
 }
@@ -1086,7 +1053,7 @@ function timeSaleReturn__init(lenis) {
     } else fold();
   }
 
-  // Entry is locked before expansion begins, not after it has already completed.
+  // Let the capsule open during the natural approach; cap only input that passes its center.
   let downHold = "ready",
     entryAligned = false,
     entryAnchor = 0;
@@ -1128,6 +1095,7 @@ function timeSaleReturn__init(lenis) {
     setMode("entering");
     setDownHold("expanding");
     lenis.stop();
+    scene.dispatchEvent(new Event("oliveyoung:sale-enter"));
     function aligned() {
       if (run !== generation || mode !== "entering") return;
       entryAligned = true;
@@ -1137,9 +1105,7 @@ function timeSaleReturn__init(lenis) {
     if (Math.abs(scrollY - entryAnchor) < 1) aligned();
     else
       lenis.scrollTo(entryAnchor, {
-        duration: 0.4,
-        easing: ease,
-        lerp: 0,
+        lerp: 0.055,
         force: true,
         lock: true,
         onComplete: aligned,
@@ -1181,7 +1147,7 @@ function timeSaleReturn__init(lenis) {
       anchor = scene.getBoundingClientRect().top + current;
     if (
       downHold === "released" &&
-      current < anchor - innerHeight * 0.2 &&
+      current < anchor - 2 &&
       Number(scene.dataset.expandProgress || 0) < 0.01
     )
       setDownHold("ready");
@@ -1193,7 +1159,7 @@ function timeSaleReturn__init(lenis) {
         current,
         Number.isFinite(lenis.targetScroll) ? lenis.targetScroll : current,
       ) + delta;
-    if (target < anchor - innerHeight * 0.2) return false;
+    if (target < anchor) return false;
     block(event);
     beginEntry(anchor);
     return true;
@@ -1231,11 +1197,11 @@ function timeSaleReturn__init(lenis) {
             ? -innerHeight * 0.8
             : event.key === "Home"
               ? -scrollY
-              : event.key === "ArrowDown" ||
-                  event.key === "PageDown" ||
-                  event.key === " "
+              : event.key === "ArrowDown"
                 ? 80
-                : 0;
+                : event.key === "PageDown" || event.key === " "
+                  ? innerHeight * 0.9
+                  : 0;
       if (delta && !enterDown(delta, event, "key", !event.repeat))
         leave(delta, event, event.key === "Home" ? 0 : undefined);
     },
@@ -1348,6 +1314,7 @@ function timeSaleExpansion__init() {
   const heading = surface?.querySelector(".top-box");
   const products = surface?.querySelector(".bottom-box");
   if (!scene || !stage || !surface || !heading || !products) return;
+  const titleInk = document.createElement("canvas").getContext("2d");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const motion = { expand: reduced.matches ? 1 : 0 };
   const clamp = gsap.utils.clamp(0, 1);
@@ -1363,12 +1330,12 @@ function timeSaleExpansion__init() {
     height: 0,
     viewport: 0,
     headingCenter: 0,
-    headingLift: 0,
+    headerGapLift: 0,
   };
 
   function draw() {
     const p = motion.expand;
-    const { width, height, viewport, headingCenter, headingLift } = geometry;
+    const { width, height, viewport, headingCenter, headerGapLift } = geometry;
     const top = viewport * 0.29 * (1 - p);
     const bottom = Math.max(0, height - viewport * 0.71) * (1 - p);
     const insetX = width * (width <= 767 ? 0.08 : 0.1875) * (1 - p);
@@ -1379,10 +1346,13 @@ function timeSaleExpansion__init() {
     surface.style.setProperty("--sale-clip-bottom", `${bottom}px`);
     surface.style.setProperty(
       "--sale-heading-y",
-      `${(viewport * 0.5 - headingCenter) * (1 - p) - headingLift * p}px`,
+      `${(viewport * 0.5 - headingCenter) * (1 - p) - headerGapLift * p}px`,
     );
     surface.style.setProperty("--sale-products-opacity", content.toFixed(4));
-    surface.style.setProperty("--sale-products-y", `${48 * (1 - content)}px`);
+    surface.style.setProperty(
+      "--sale-products-y",
+      `${48 * (1 - content) - headerGapLift * p}px`,
+    );
     surface.style.setProperty("--sale-detail-opacity", content.toFixed(4));
     scene.dataset.expandProgress = p.toFixed(4);
     const hidden = p < 0.72;
@@ -1451,16 +1421,34 @@ function timeSaleExpansion__init() {
   function requestPaint() {
     if (!frame) frame = requestAnimationFrame(paint);
   }
+  scene.addEventListener("oliveyoung:sale-enter", requestPaint);
   function measure() {
     measureFrame = 0;
     const viewport = document.documentElement.clientHeight;
+    const headerHeight = document.querySelector("header")?.offsetHeight || 0;
+    surface.style.setProperty("--sale-header-height", `${headerHeight}px`);
     const height = surface.offsetHeight;
+    const label = heading.querySelector(".time-sale > span");
+    const labelStyle = getComputedStyle(label);
+    titleInk.font = `${labelStyle.fontWeight} ${labelStyle.fontSize} ${labelStyle.fontFamily}`;
+    const ink = titleInk.measureText(label.textContent);
+    const ascent = ink.fontBoundingBoxAscent ?? ink.actualBoundingBoxAscent;
+    const descent = ink.fontBoundingBoxDescent ?? ink.actualBoundingBoxDescent;
+    const inkTop =
+      (parseFloat(labelStyle.lineHeight) - ascent - descent) / 2 +
+      ascent -
+      ink.actualBoundingBoxAscent;
     geometry = {
       width: stage.clientWidth,
       height,
       viewport,
       headingCenter: heading.offsetTop + heading.offsetHeight / 2,
-      headingLift: heading.offsetTop / 2,
+      // Keep 25% of the visible header-to-title gap, including the font's leading.
+      headerGapLift:
+        Math.max(
+          0,
+          heading.offsetTop + label.offsetTop + inkTop - headerHeight,
+        ) * 0.75,
     };
     const tall = height > viewport + 2 || innerWidth <= 767;
     scene.classList.toggle("is-tall", tall);
@@ -1495,67 +1483,6 @@ function timeSaleExpansion__init() {
   else document.addEventListener("oliveyoung:ready", start, { once: true });
 }
 
-// The full-page background stays steady; only product cards receive a gentle tilt.
-function timeSaleTilt__init() {
-  gsap
-    .matchMedia()
-    .add(
-      "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
-      () => {
-        const cleanups = [...document.querySelectorAll(".sale-item")].map(
-          (card) => {
-            gsap.set(card, {
-              "--sale-tilt-x": 0,
-              "--sale-tilt-y": 0,
-              "--sale-tilt-scale": 1,
-            });
-            const options = { duration: 0.45, ease: "power2.out" };
-            const rotateX = gsap.quickTo(card, "--sale-tilt-x", options),
-              rotateY = gsap.quickTo(card, "--sale-tilt-y", options),
-              scale = gsap.quickTo(card, "--sale-tilt-scale", options);
-            const clamp = gsap.utils.clamp(-1, 1);
-            function move(event) {
-              const parent = card.offsetParent || document.documentElement;
-              const rect = parent.getBoundingClientRect();
-              const x = clamp(
-                ((event.clientX - rect.left - card.offsetLeft) /
-                  card.offsetWidth) *
-                  2 -
-                  1,
-              );
-              const y = clamp(
-                ((event.clientY - rect.top - card.offsetTop) /
-                  card.offsetHeight) *
-                  2 -
-                  1,
-              );
-              rotateX(-y * 0.9);
-              rotateY(x * 0.9);
-              scale(1.006);
-            }
-            function reset() {
-              rotateX(0);
-              rotateY(0);
-              scale(1);
-            }
-            card.addEventListener("pointerenter", move);
-            card.addEventListener("pointermove", move);
-            card.addEventListener("pointerleave", reset);
-            card.addEventListener("pointercancel", reset);
-            addEventListener("blur", reset);
-            return () => {
-              card.removeEventListener("pointerenter", move);
-              card.removeEventListener("pointermove", move);
-              card.removeEventListener("pointerleave", reset);
-              card.removeEventListener("pointercancel", reset);
-              removeEventListener("blur", reset);
-            };
-          },
-        );
-        return () => cleanups.forEach((cleanup) => cleanup());
-      },
-    );
-}
 // Two tiny ball-like hops on each real hover; the extra hit area stays comfortable.
 function topButtonBounce__init() {
   const button = document.querySelector(".express-top-btn");
@@ -1724,13 +1651,23 @@ function mobileHeader__init() {
   });
 }
 
+// Keep only the header logo and the dedicated TOP button as return-to-top controls.
+function placeholderLinks__init() {
+  document.addEventListener("click", (event) => {
+    const link =
+      event.target instanceof Element ? event.target.closest("a[href]") : null;
+    if (!link || link.matches("header .logo-wrapper")) return;
+    event.preventDefault();
+  });
+}
+
 // Functions Operate Key ------------------------------ //
+placeholderLinks__init();
 loadingPage__init();
 bannerSwiper__init();
 scrollLeins__init();
 marqueeSlide__init();
 heartDown__init();
-hoveredDark__init();
 timeSaleCountdown__init();
 itemsSwiper__Init();
 itemboxViewer__init();
@@ -1744,7 +1681,6 @@ appBannerParallax__init();
 footerLift__init();
 
 timeSaleExpansion__init();
-timeSaleTilt__init();
 
 topButtonBounce__init();
 
