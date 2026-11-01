@@ -3,14 +3,41 @@ console.clear();
 AOS.init();
 gsap.registerPlugin(ScrollTrigger);
 
+// Keep each Korean syllable intact while animating the visible characters.
+function splitMotionCharacters(element, className) {
+  const text = element.textContent.trim();
+  const segments =
+    typeof Intl.Segmenter === "function"
+      ? [
+          ...new Intl.Segmenter("ko", { granularity: "grapheme" }).segment(
+            text,
+          ),
+        ].map((part) => part.segment)
+      : Array.from(text);
+  const characters = [];
+  element.replaceChildren(
+    ...segments.map((character) => {
+      if (/\s/u.test(character)) return document.createTextNode(character);
+      const span = document.createElement("span");
+      span.className = className;
+      span.textContent = character;
+      span.setAttribute("aria-hidden", "true");
+      characters.push(span);
+      return span;
+    }),
+  );
+  return characters;
+}
+
 // loadingPage ------------------------------ //
 function loadingPage__init() {
   const loader = document.querySelector(".loading-page");
   if (!loader) return;
   const copy = loader.querySelector(".loader-copy");
-  const phraseWindow = loader.querySelector(".loader-phrase-window");
   const outgoing = loader.querySelector(".loader-phrase--current");
   const incoming = loader.querySelector(".loader-phrase--next");
+  const firstCharacters = splitMotionCharacters(outgoing, "loader-char");
+  const nextCharacters = splitMotionCharacters(incoming, "loader-char");
   const savedStyles = [document.documentElement, document.body].map(
     (element) => ({
       element,
@@ -71,6 +98,16 @@ function loadingPage__init() {
   }
 
   function animate() {
+    [outgoing, incoming].forEach((phrase) => {
+      const bounds = phrase.getBoundingClientRect();
+      phrase.style.setProperty("--loader-line-width", bounds.width + "px");
+      phrase.querySelectorAll(".loader-char").forEach((character) => {
+        character.style.setProperty(
+          "--loader-char-offset",
+          bounds.left - character.getBoundingClientRect().left + "px",
+        );
+      });
+    });
     const timeline = gsap.timeline({
       data: "oliveyoung-loader",
       onComplete: finish,
@@ -78,104 +115,65 @@ function loadingPage__init() {
     const stage = (name) => {
       loader.dataset.stage = name;
     };
+    const enterDuration = 1;
+    const stagger = 0.045;
+    const firstDuration =
+      enterDuration + stagger * (firstCharacters.length - 1);
+    const nextDuration = enterDuration + stagger * (nextCharacters.length - 1);
     gsap.set(copy, { autoAlpha: 0 });
-    gsap.set(phraseWindow, {
-      "--loader-reveal": "0%",
-      "--loader-fog": 0,
-      "--loader-feather": "0.38em",
-    });
-    gsap.set(outgoing, {
+    gsap.set([...firstCharacters, ...nextCharacters], {
       y: 0,
-      yPercent: 0,
+      yPercent: 115,
       opacity: 1,
-      filter: "blur(0px)",
-      clipPath: "inset(0% 100% 0% 0%)",
     });
-    gsap.set(incoming, {
-      y: 0,
-      yPercent: 105,
-      opacity: 0,
-      filter: "blur(3px)",
-    });
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      stage("fade-out");
-      timeline.to(loader, { autoAlpha: 0, duration: 0.2 }, 0);
-      return;
-    }
-
     timeline
-      .addLabel("intro", 0)
+      .addLabel("intro", 0.1)
       .call(() => stage("intro"), [], "intro")
-      .set(copy, { autoAlpha: 1 }, 0.1)
+      .set(copy, { autoAlpha: 1 }, "intro")
       .to(
-        outgoing,
-        {
-          clipPath: "inset(0% 0% 0% 0%)",
-          duration: 1.5,
-          ease: "sine.inOut",
-        },
-        0.1,
-      )
-      .to(
-        phraseWindow,
-        {
-          "--loader-reveal": "100%",
-          duration: 1.5,
-          ease: "sine.inOut",
-        },
-        0.1,
-      )
-      .to(
-        phraseWindow,
-        { "--loader-fog": 1, duration: 0.25, ease: "sine.inOut" },
-        0.16,
-      )
-      .to(
-        phraseWindow,
-        {
-          "--loader-fog": 0,
-          "--loader-feather": "0em",
-          duration: 0.35,
-          ease: "sine.inOut",
-        },
-        1.25,
-      )
-      .addLabel("first-copy", 1.6)
-      .addLabel("phrase-roll", "first-copy+=1.1")
-      .call(() => stage("phrase-roll"), [], "phrase-roll")
-      .to(
-        outgoing,
-        {
-          yPercent: -105,
-          opacity: 0,
-          filter: "blur(3px)",
-          duration: 1.5,
-          ease: "power2.inOut",
-        },
-        "phrase-roll",
-      )
-      .to(
-        incoming,
+        firstCharacters,
         {
           yPercent: 0,
-          opacity: 1,
-          filter: "blur(0px)",
-          duration: 1.5,
+          duration: enterDuration,
+          stagger,
+          ease: "power3.out",
+        },
+        "intro",
+      )
+      .addLabel("first-copy", 0.1 + firstDuration)
+      .addLabel("phrase-roll", "first-copy+=1.25")
+      .call(() => stage("phrase-roll"), [], "phrase-roll")
+      .to(
+        firstCharacters,
+        {
+          yPercent: -115,
+          duration: 0.8,
+          stagger,
           ease: "power2.inOut",
         },
         "phrase-roll",
       )
-      .addLabel("second-copy", "phrase-roll+=1.5")
+      .addLabel("second-enter", "phrase-roll+=0.22")
+      .to(
+        nextCharacters,
+        {
+          yPercent: 0,
+          duration: enterDuration,
+          stagger,
+          ease: "power3.out",
+        },
+        "second-enter",
+      )
+      .addLabel("second-copy", 0.1 + firstDuration + 1.25 + 0.22 + nextDuration)
       .call(() => stage("second-copy"), [], "second-copy")
-      .addLabel("copy-fade-out", "second-copy+=1.45")
+      .addLabel("copy-fade-out", "second-copy+=1.6")
       .call(() => stage("copy-fade-out"), [], "copy-fade-out")
       .to(
         copy,
         { autoAlpha: 0, duration: 0.7, ease: "sine.inOut" },
         "copy-fade-out",
       )
-      .addLabel("fade-out", "copy-fade-out+=0.63") // 90% of the 0.7s text fade.
+      .addLabel("fade-out", "copy-fade-out+=0.63")
       .call(() => stage("fade-out"), [], "fade-out")
       .to(
         loader,
@@ -324,14 +322,11 @@ function scrollLeins__init() {
   }
 
   document.querySelector(".express-top-btn")?.addEventListener("click", () => {
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
     lenis.scrollTo(0, {
-      duration: reduced ? 0 : 1.05,
+      duration: 1.05,
       easing: referenceEase,
       lerp: 0,
-      immediate: reduced,
+      immediate: false,
       force: true,
       lock: true,
     });
@@ -458,6 +453,19 @@ function heartDown__init() {
     });
   });
 }
+// A gentle traveling wave runs across TIME and SALE in reading order.
+function timeSaleTitleWave__init() {
+  const title = document.querySelector(".sale-stage .time-sale");
+  if (!title) return;
+  title.setAttribute("aria-label", title.textContent.trim());
+  let index = 0;
+  title.querySelectorAll(":scope > span, :scope > em").forEach((word) => {
+    splitMotionCharacters(word, "sale-letter").forEach((letter) => {
+      letter.style.setProperty("--sale-letter-index", String(index++));
+    });
+  });
+}
+
 // timeSaleCountdown ------------------------------ //
 function timeSaleCountdown__init() {
   const hEl = document.getElementById("hours");
@@ -482,8 +490,12 @@ function timeSaleCountdown__init() {
     hEl.textContent = String(h).padStart(2, "0");
     mEl.textContent = String(m).padStart(2, "0");
     sEl.textContent = String(s).padStart(2, "0");
+    hEl
+      .closest(".timer-box")
+      .setAttribute("aria-label", `타임세일 남은 시간 ${h}시간 ${m}분 ${s}초`);
   }
 
+  renderTime(totalSeconds);
   setInterval(() => {
     totalSeconds--;
 
@@ -496,7 +508,10 @@ function timeSaleCountdown__init() {
 }
 // itemsSwiper ------------------------------ //
 function itemsSwiper__Init() {
-  const itemsSwiper = new Swiper(".item-slider", {
+  new Swiper(".item-slider", {
+    // Scaled side cards leave empty hit areas on the outer slider.
+    touchEventsTarget: "container",
+    grabCursor: true,
     loop: true,
     centeredSlides: true,
     watchOverflow: false,
@@ -505,6 +520,7 @@ function itemsSwiper__Init() {
     autoplay: {
       delay: 3000,
       disableOnInteraction: false,
+      pauseOnMouseEnter: true,
     },
 
     breakpoints: {
@@ -529,18 +545,6 @@ function itemsSwiper__Init() {
         spaceBetween: 10,
       },
     },
-  });
-
-  const swiperEl = document.querySelectorAll(".item-box img");
-
-  swiperEl.forEach((el) => {
-    el.addEventListener("mouseenter", () => {
-      itemsSwiper.autoplay.stop();
-    });
-
-    el.addEventListener("mouseleave", () => {
-      itemsSwiper.autoplay.start();
-    });
   });
 }
 // itemboxViewer ------------------------------ //
@@ -659,12 +663,7 @@ function bottomSelectboxDropDown__init() {
 }
 // Each element enters after crossing a line just above the viewport bottom.
 function sectionReveal__init() {
-  if (
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-    !("IntersectionObserver" in window) ||
-    !Element.prototype.animate
-  )
-    return;
+  if (!("IntersectionObserver" in window) || !Element.prototype.animate) return;
 
   // Hero uses only its original slideshow and floating motion, without entrance fades.
   const selectors = [
@@ -802,25 +801,6 @@ function sectionReveal__init() {
   if (document.querySelector(".loading-page")?.style.display === "none")
     start();
   else document.addEventListener("oliveyoung:ready", start, { once: true });
-
-  window
-    .matchMedia("(prefers-reduced-motion: reduce)")
-    .addEventListener("change", (event) => {
-      if (!event.matches) return;
-      started = false;
-      observer?.disconnect();
-      cancelAnimationFrame(resizeFrame);
-      cancelAnimationFrame(endFrame);
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", requestEndCheck);
-      document.removeEventListener("oliveyoung:ready", start);
-      targets.forEach((target) => {
-        target.dataset.scrollReveal = "done";
-      });
-      animations.forEach((animation) => animation.cancel());
-      animations.clear();
-      pending.clear();
-    });
 }
 
 // The app banner is a clipped window behind the two neighboring white sections.
@@ -828,7 +808,7 @@ function appBannerParallax__init() {
   const banner = document.querySelector(".sec-mobile-banner");
   if (!banner) return;
 
-  gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+  gsap.context(() => {
     const compact = () => window.innerWidth <= 767;
     const backgroundRange = () => Math.min(42, banner.offsetHeight * 0.07);
     const phoneRange = () =>
@@ -880,7 +860,7 @@ function appBannerParallax__init() {
 function footerLift__init() {
   const footer = document.querySelector("footer");
   if (!footer) return;
-  gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+  gsap.context(() => {
     const distance = () => (window.innerWidth <= 767 ? 96 : 144);
     const lift = gsap.fromTo(
       footer,
@@ -932,7 +912,6 @@ function footerLift__init() {
 function timeSaleReturn__init(lenis) {
   const scene = document.querySelector(".sale-scene");
   if (!scene) return;
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   let mode = "idle",
     generation = 0,
     holdY = 0,
@@ -982,12 +961,7 @@ function timeSaleReturn__init(lenis) {
       block(event);
       return;
     }
-    if (
-      reduced.matches ||
-      delta >= 0 ||
-      Number(scene.dataset.expandProgress || 0) <= 0.01
-    )
-      return;
+    if (delta >= 0 || Number(scene.dataset.expandProgress || 0) <= 0.01) return;
     const current = Math.max(0, scrollY);
     const top = scene.getBoundingClientRect().top + current;
     const target =
@@ -1125,7 +1099,7 @@ function timeSaleReturn__init(lenis) {
       lenis.scrollTo(top + stickyDistance, { immediate: true, force: true });
   }
   function enterDown(delta, event, kind, fresh = false) {
-    if (reduced.matches || (event && excluded(event.target))) return false;
+    if (event && excluded(event.target)) return false;
     if (entryMode()) {
       if (delta < 0) {
         cancel();
@@ -1303,7 +1277,6 @@ function timeSaleReturn__init(lenis) {
   );
   document.querySelector(".express-top-btn")?.addEventListener("click", cancel);
   window.addEventListener("resize", cancel, { passive: true });
-  reduced.addEventListener("change", cancel);
 }
 
 // Use the same clipped capsule-to-full-surface entrance as JW's contact section.
@@ -1315,10 +1288,9 @@ function timeSaleExpansion__init() {
   const products = surface?.querySelector(".bottom-box");
   if (!scene || !stage || !surface || !heading || !products) return;
   const titleInk = document.createElement("canvas").getContext("2d");
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-  const motion = { expand: reduced.matches ? 1 : 0 };
+  const motion = { expand: 0 };
   const clamp = gsap.utils.clamp(0, 1);
-  let expanded = reduced.matches,
+  let expanded = false,
     started = false,
     frame = 0,
     measureFrame = 0;
@@ -1346,7 +1318,7 @@ function timeSaleExpansion__init() {
     surface.style.setProperty("--sale-clip-bottom", `${bottom}px`);
     surface.style.setProperty(
       "--sale-heading-y",
-      `${(viewport * 0.5 - headingCenter) * (1 - p) - headerGapLift * p}px`,
+      `${(viewport * 0.5 - headingCenter) * (1 - p) - headerGapLift * p + 16 * p}px`,
     );
     surface.style.setProperty("--sale-products-opacity", content.toFixed(4));
     surface.style.setProperty(
@@ -1375,14 +1347,13 @@ function timeSaleExpansion__init() {
       delete scene.dataset.exitState;
     }
     lastScroll = current;
-    const shouldExpand =
-      reduced.matches || (!exiting && sceneTop <= innerHeight * 0.2);
+    const shouldExpand = !exiting && sceneTop <= innerHeight * 0.2;
     if (expanded === shouldExpand) return;
     expanded = shouldExpand;
     if (expanded) scene.dispatchEvent(new Event("oliveyoung:sale-opening"));
     gsap.to(motion, {
       expand: expanded ? 1 : 0,
-      duration: reduced.matches ? 0 : 1.2,
+      duration: 1.2,
       ease: "power2.inOut",
       overwrite: true,
       onUpdate: draw,
@@ -1399,7 +1370,7 @@ function timeSaleExpansion__init() {
     scene.dataset.exitState = "shrinking";
     gsap.to(motion, {
       expand: 0,
-      duration: reduced.matches ? 0 : 1,
+      duration: 1,
       ease: "power2.inOut",
       overwrite: true,
       onUpdate: draw,
@@ -1473,10 +1444,6 @@ function timeSaleExpansion__init() {
   addEventListener("resize", requestMeasure, { passive: true });
   new ResizeObserver(requestMeasure).observe(surface);
   new ResizeObserver(requestMeasure).observe(heading);
-  reduced.addEventListener("change", () => {
-    expanded = !reduced.matches;
-    requestPaint();
-  });
   measure();
   if (document.querySelector(".loading-page")?.style.display === "none")
     start();
@@ -1487,14 +1454,13 @@ function timeSaleExpansion__init() {
 function topButtonBounce__init() {
   const button = document.querySelector(".express-top-btn");
   if (!button) return;
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   let bounce;
   function stop() {
     bounce?.cancel();
     bounce = undefined;
   }
   function play(event) {
-    if (reduced.matches || event.pointerType === "touch") return;
+    if (event.pointerType === "touch") return;
     stop();
     const animation = button.animate(
       [
@@ -1533,9 +1499,6 @@ function topButtonBounce__init() {
   button.addEventListener("pointerenter", play);
   button.addEventListener("pointerleave", stop);
   button.addEventListener("pointercancel", stop);
-  reduced.addEventListener("change", (event) => {
-    if (event.matches) stop();
-  });
 }
 
 // Mobile header uses a native modal for focus containment and a right-side slide.
@@ -1544,7 +1507,6 @@ function mobileHeader__init() {
   const menu = document.querySelector(".mobile-menu");
   if (!toggle || !menu) return;
   const mobile = matchMedia("(max-width: 768px)");
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const root = document.documentElement;
   const closeButton = menu.querySelector(".mobile-menu__close");
   let closeTimer,
@@ -1570,7 +1532,7 @@ function mobileHeader__init() {
     closing = true;
     menu.classList.remove("is-open");
     toggle.setAttribute("aria-expanded", "false");
-    closeTimer = setTimeout(() => finishClose(), reduced.matches ? 0 : 340);
+    closeTimer = setTimeout(() => finishClose(), 340);
   }
   function open() {
     if (!mobile.matches) return;
@@ -1589,13 +1551,7 @@ function mobileHeader__init() {
   toggle.addEventListener("click", open);
   closeButton.addEventListener("click", close);
   closeButton.addEventListener("pointerenter", (event) => {
-    if (
-      event.pointerType === "touch" ||
-      reduced.matches ||
-      !menu.open ||
-      closing ||
-      closeSpin
-    )
+    if (event.pointerType === "touch" || !menu.open || closing || closeSpin)
       return;
     const animation = closeButton.animate(
       [{ rotate: "0deg" }, { rotate: "-360deg" }],
@@ -1668,6 +1624,7 @@ bannerSwiper__init();
 scrollLeins__init();
 marqueeSlide__init();
 heartDown__init();
+timeSaleTitleWave__init();
 timeSaleCountdown__init();
 itemsSwiper__Init();
 itemboxViewer__init();

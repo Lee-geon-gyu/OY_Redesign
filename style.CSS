@@ -166,9 +166,6 @@ span {
 }
 
 .loader-phrase-window {
-  --loader-reveal: 0%;
-  --loader-fog: 0;
-  --loader-feather: 0.38em;
   position: relative;
   display: inline-grid;
   flex: 0 0 auto;
@@ -176,13 +173,6 @@ span {
   padding-inline: 0.08em;
   margin-inline: -0.08em;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(
-    transparent,
-    #000 22%,
-    #000 78%,
-    transparent
-  );
-  mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent);
 }
 
 .loader-phrase {
@@ -193,7 +183,7 @@ span {
   grid-area: 1 / 1;
   display: block;
   white-space: pre;
-  background-image:
+  --loader-ink:
     linear-gradient(
       168deg,
       transparent 12%,
@@ -215,69 +205,25 @@ span {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
-.loader-phrase--current {
-  clip-path: inset(0% 100% 0% 0%);
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    #000 calc(var(--loader-reveal) - var(--loader-feather)),
-    transparent var(--loader-reveal)
-  );
-  mask-image: linear-gradient(
-    90deg,
-    #000 calc(var(--loader-reveal) - var(--loader-feather)),
-    transparent var(--loader-reveal)
-  );
+.loader-char {
+  display: inline-block;
+  background-image: var(--loader-ink);
+  background-size: var(--loader-line-width, 100%) 100%;
+  background-position: var(--loader-char-offset, 0px) 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: translateY(115%);
+  will-change: transform;
 }
-
-/* Mist follows only the reveal edge; unrevealed letters stay clipped. */
-.loader-phrase-window::before,
-.loader-phrase-window::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: var(--loader-reveal);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.loader-phrase-window::before {
-  width: 1.9em;
-  height: 0.95em;
-  background: radial-gradient(
-    ellipse,
-    rgba(176, 198, 164, 0.2),
-    rgba(238, 209, 221, 0.12) 42%,
-    transparent 72%
-  );
-  filter: blur(0.16em);
-  transform: translate(-78%, -35%) rotate(15deg);
-  opacity: calc(var(--loader-fog) * 0.6);
-}
-
-.loader-phrase-window::after {
-  width: 1.35em;
-  height: 1.35em;
-  background: radial-gradient(
-    ellipse at 45% 42%,
-    rgba(248, 246, 243, 0.94),
-    rgba(235, 241, 229, 0.55) 28%,
-    rgba(235, 191, 207, 0.16) 50%,
-    transparent 72%
-  );
-  filter: blur(0.09em);
-  transform: translate(-60%, -50%) rotate(-12deg);
-  opacity: var(--loader-fog);
-}
-
 .loader-phrase--next {
   --loader-color-start: #df7c9d;
   --loader-color-start-soft: #eaa2bc;
   --loader-color-end-soft: #8cba77;
   --loader-color-end: #5b914b;
-  transform: translateY(105%);
-  opacity: 0;
+}
+.loading-page[aria-hidden="true"] .loader-char {
+  will-change: auto;
 }
 
 .loading-page[aria-hidden="true"] {
@@ -349,13 +295,6 @@ span {
 
 .express-top-btn:is(:hover, :focus-visible) .top-btn__glyph {
   transform: translateY(0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .express-top-btn .top-btn__word,
-  .express-top-btn .top-btn__glyph {
-    transition-duration: 0.01ms;
-  }
 }
 
 /* header ------------------------------------------------------------ */
@@ -4512,10 +4451,9 @@ main > .sec-mobile-banner > .bg-container > img {
 }
 
 /* A small independent float adds life to the background while scroll adds depth. */
-@media (prefers-reduced-motion: no-preference) {
-  main > .sec-mobile-banner > .bg-container > img {
-    animation: appBannerBackgroundFloat 7s ease-in-out infinite;
-  }
+
+main > .sec-mobile-banner > .bg-container > img {
+  animation: appBannerBackgroundFloat 7s ease-in-out infinite;
 }
 
 @keyframes appBannerBackgroundFloat {
@@ -4558,7 +4496,7 @@ main
   filter: brightness(0) invert(1);
 }
 
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+@media (hover: hover) and (pointer: fine) {
   main > .sec-planning > .time-sale-wrapper {
     transform: perspective(1400px) rotateX(calc(var(--sale-tilt-x, 0) * 1deg))
       rotateY(calc(var(--sale-tilt-y, 0) * 1deg))
@@ -4669,7 +4607,7 @@ main > .sec-planning > .text-box {
   width: 100%;
   min-height: 100svh;
   padding: calc(clamp(100px, 10svh, 132px) + var(--sale-header-reserve)) 0
-    clamp(44px, 5svh, 72px);
+    max(24px, calc(clamp(44px, 5svh, 72px) - 20px));
   color: #fff;
   background: #0c110f;
   clip-path: inset(29svh 18.75% calc(100% - 71svh) round 220px);
@@ -4721,12 +4659,29 @@ main > .sec-planning > .text-box {
   line-height: 1.12;
   letter-spacing: -0.045em;
 }
+.sale-stage .time-sale .sale-letter {
+  --sale-wave-amplitude: clamp(1.5px, 0.16vw, 3px);
+  display: inline-block;
+  animation: saleTitleWave 6.4s ease-in-out infinite;
+  animation-delay: calc(var(--sale-letter-index) * 0.2s - 1.4s);
+}
+@keyframes saleTitleWave {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(calc(-1 * var(--sale-wave-amplitude)));
+  }
+  75% {
+    transform: translateY(var(--sale-wave-amplitude));
+  }
+}
 .sale-stage .time-sale em {
   color: #c3ec64;
   font-style: normal;
 }
-.sale-stage .sale-subtitle,
-.sale-stage .timer-label {
+.sale-stage .sale-subtitle {
   opacity: var(--sale-detail-opacity);
 }
 .sale-subtitle {
@@ -4751,21 +4706,14 @@ main > .sec-planning > .text-box {
 .sale-stage .timer-unit .number {
   width: clamp(84px, 7.3vw, 138px);
   padding: 7px 14px 9px;
-  border: 1px solid #ffffff24;
-  border-radius: 8px;
-  background: linear-gradient(145deg, #ffffff08, #0002);
-  box-shadow:
-    inset 0 0 0 1px #ffffff08,
-    0 0 14px #d7e7af0d;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
   font-size: clamp(40px, 3.8vw, 64px);
   font-weight: 600;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
-}
-.sale-stage .timer-label {
-  font-size: 12px;
-  font-weight: 500;
-  color: #d9e1d4;
 }
 .sale-stage .colon-box {
   display: flex;
@@ -4781,7 +4729,7 @@ main > .sec-planning > .text-box {
   background: #eee;
 }
 .sale-stage .bottom-box {
-  margin-top: 32px;
+  margin-top: 72px;
   opacity: var(--sale-products-opacity);
   translate: 0 var(--sale-products-y);
 }
@@ -4953,11 +4901,8 @@ main > .sec-planning > .text-box {
   .sale-stage .colon-box {
     height: 64px;
   }
-  .sale-stage .timer-label {
-    font-size: 12px;
-  }
   .sale-stage .bottom-box {
-    margin-top: 36px;
+    margin-top: 76px;
   }
   .sale-stage .sale-items-wrapper {
     grid-template-columns: minmax(0, 1fr);
@@ -4978,17 +4923,6 @@ main > .sec-planning > .text-box {
     height: 42px;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .sale-stage > .time-sale-wrapper {
-    clip-path: none;
-    --sale-products-opacity: 1;
-    --sale-products-y: 0px;
-    --sale-detail-opacity: 1;
-  }
-  .sale-stage .sale-item {
-    transform: none;
-  }
-}
 
 .sale-stage .view-btn {
   --sale-button-border: #fff;
@@ -5005,12 +4939,11 @@ main > .sec-planning > .text-box {
   color: var(--sale-button-inverse);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .sale-stage > .time-sale-wrapper::before {
-    animation: saleGlowBreath 7.8s ease-in-out -2.4s infinite;
-    will-change: opacity;
-  }
+.sale-stage > .time-sale-wrapper::before {
+  animation: saleGlowBreath 7.8s ease-in-out -2.4s infinite;
+  will-change: opacity;
 }
+
 @keyframes saleGlowBreath {
   0%,
   100% {
@@ -5298,12 +5231,6 @@ footer > .ft-bottom-box {
     font-weight: 500;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .mobile-menu,
-  .mobile-menu::backdrop {
-    transition-duration: 0.01ms;
-  }
-}
 
 /* Mobile menu controls retain the desktop header's restrained scale hover. */
 @media (max-width: 767px) {
@@ -5344,12 +5271,5 @@ footer > .ft-bottom-box {
   .mobile-menu__account a:hover,
   .mobile-menu__close:hover {
     scale: 1.1;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .mobile-menu-toggle,
-  .mobile-menu a,
-  .mobile-menu button {
-    transition-duration: 0.01ms;
   }
 }
